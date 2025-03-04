@@ -8,7 +8,7 @@ from utils.cyphers import (
     show_vector_indices,
 )
 from utils.pipeline import ReviewDatasetPipeline
-from utils.prompts import template
+from utils.prompts import template, short_template
 from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import neo4j
@@ -145,12 +145,13 @@ def show_indexes(driver):
 #     return response.choices[0].message.content
 
 
-def get_llm_summary(context, question):
+def get_llm_summary(context: str, question: str, short_answer: bool):
+    template = short_template if short_answer else template
     p = ReviewDatasetPipeline(model=MODEL, template=template)
     return p.run(text=context, query=question)
 
 
-def main(question, tripplets):
+def main(question, tripplets, short_answer):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=2000,
         chunk_overlap=200,
@@ -184,7 +185,9 @@ def main(question, tripplets):
 
     if len(nodes) > 0:
         sorted_nodes = sorted(nodes, key=lambda x: x["distance"], reverse=True)
-        llm_response = get_llm_summary(context=sorted_nodes[0], question=question)
+        llm_response = get_llm_summary(
+            context=sorted_nodes[0], question=question, short_answer=short_answer
+        )
         print(llm_response[0])
     else:
         print("No matches found")
@@ -193,4 +196,4 @@ def main(question, tripplets):
 if __name__ == "__main__":
     question = "Tell me about the NetApp Company"
 
-    main(question=question, tripplets=False)
+    main(question=question, tripplets=False, short_answer=True)
