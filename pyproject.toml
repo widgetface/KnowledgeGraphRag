@@ -4,4 +4,11 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "haystack-ai>=2.10.3",
+    "langchain-community>=0.3.18",
+    "langchain-ollama>=0.2.3",
+    "neo4j>=5.28.1",
+    "ollama-haystack>=2.3.0",
+    "sentence-transformers>=3.4.1",
+]
